@@ -1,7 +1,8 @@
 *.pyc
-__pycache
+__pycache__
 ./services/flaskapp/venv
-venv/ .vscode/
+venv/ 
+.vscode/
 .DS_Store
 .env.dev
 .env.prod

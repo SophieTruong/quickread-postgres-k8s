@@ -1,13 +1,22 @@
 """
 This file is responsible for processing input data, tokenize it and feed it to the model
 """
+import os
 import re
 import torch
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from langdetect import detect
 
-tokenizer = AutoTokenizer.from_pretrained("QuickRead/pegasus-reddit-7e05-new")
-model = AutoModelForSeq2SeqLM.from_pretrained("QuickRead/pegasus-reddit-7e05-new")
+cache_dir = os.getenv("TRANSFORMERS_CACHE")
+print("Value of 'TRANSFORMERS_CACHE' environment variable :", cache_dir)
+
+tokenizer = AutoTokenizer.from_pretrained(
+    "QuickRead/pegasus-reddit-7e05-new",
+    cache_dir=cache_dir)
+model = AutoModelForSeq2SeqLM.from_pretrained(
+    "QuickRead/pegasus-reddit-7e05-new",
+    cache_dir=cache_dir
+    )
 
 def remove_emoji(input):
     """

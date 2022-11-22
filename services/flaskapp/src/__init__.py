@@ -1,5 +1,6 @@
 ''' This initiate the app object '''
-from flask import Flask, request, render_template
+import csv
+from flask import Flask, request, render_template, send_file
 from src.models import db,UnlabeledData
 from src.summarization import preprocess,predict
 
@@ -9,7 +10,7 @@ app.config.from_object("src.config.Config")
 
 # Initialize the database
 db.init_app(app)
-
+session = db.session
 @app.route('/', methods=['POST', 'GET'])
 def index():
     """ This is the main flask route """
@@ -21,12 +22,13 @@ def index():
             # error case
             return render_template(
                 'index.html',
-                summary="Input Error: Make sure that input is English or has max character count of 1000"
+                summary="Input Error: \
+                    Make sure that input is English or has max character count of 1000"
                 )
         summary = predict(inp_ids)
         print('Summary is: \n', summary)
-        db.session.add(UnlabeledData(raw_text_input=inp,model_output=summary))
-        db.session.commit()
+        session.add(UnlabeledData(raw_text_input=inp,model_output=summary))
+        session.commit()
         return render_template('index.html', summary=summary)
     print("GETTING get")
     return render_template('index.html', summary="Nothing to summarize")
@@ -34,5 +36,17 @@ def index():
 @app.route("/unlabeled_data")
 def unlabeled_data():
     """ This is the db test flask route """
-    num_unlabeled_data = UnlabeledData.query.count()
-    return f"Number of unlabeled_data: {num_unlabeled_data}"
+    with open('dump.csv', 'w') as f:
+        out = csv.writer(f)
+        out.writerow(['id', 'raw_text_input', 'model_output'])
+
+        for item in session.query(UnlabeledData).all():
+            out.writerow([item.id, item.raw_text_input, item.model_output])
+
+    return send_file(
+        '../dump.csv',
+        mimetype='text/csv',
+        download_name='Test_datadump.csv',
+        as_attachment=True
+    )
+    

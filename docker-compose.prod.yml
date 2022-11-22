@@ -1,29 +1,39 @@
 version: '3.8'
 
 services:
-  nginx:
-    build: ./services/nginx
-    ports:
-      - 1337:80
-    depends_on:
-      - web
+  db:
+    container_name: db
+    image: postgres:13-alpine
+    volumes:
+      - postgresdata_prod:/var/lib/postgresql/data/
+    env_file:
+      - ./.env.prod.db
   web:
+    container_name: web
     build: 
       context: ./services/flaskapp
       dockerfile: Dockerfile.prod
-    command: gunicorn --bind 0.0.0.0:8080 manage:app
+    image: sophietruong92/quick-read-flaskapp:1.2
+    command: gunicorn --bind 0.0.0.0:5050 --log-level debug --timeout 150 --threads=4 manage:app
     expose:
-      - 8080
+      - 5050
     env_file:
       - ./.env.prod
+    volumes:
+      - mlmodelcache:/home/app/web/.cache
     depends_on:
       - db
-  db:
-    image: postgres:13-alpine
-    volumes:
-      - postgres_data_prod:/var/lib/postgresql/data/
-    env_file:
-      - ./.env.prod.db
-
+  nginx:
+    container_name: server
+    build: ./services/nginx
+    image: sophietruong92/quick-read-webserver:1.2
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
 volumes:
-  postgres_data_prod:
+  postgresdata_prod:
+    driver: local
+  mlmodelcache:
+    driver: local

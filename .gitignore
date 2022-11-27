@@ -8,3 +8,6 @@ venv/
 .env.prod
 .env.prod.db
 .pylintrc
+#Test
+.pytest_cache
+.coverage

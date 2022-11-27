@@ -5,8 +5,8 @@ services:
   db:
     container_name: db
     image: postgres:13-alpine
-    ports:
-      - "5432:5432"
+    # ports:
+    #   - "5432:5432"
     # volumes:
     #   - postgresdata_prod:/var/lib/postgresql/data/
     env_file:
@@ -14,7 +14,7 @@ services:
   web:
     container_name: web
     image: registry.hub.docker.com/sophietruong92/quick-read-flaskapp:1.2
-    command: gunicorn --bind 0.0.0.0:5050 --log-level debug --timeout 150 --threads=4 manage:app 
+    command: gunicorn --bind 0.0.0.0:5050 --log-level debug --timeout 150 --threads=2 manage:app 
     expose:
       - 5050
     deploy:

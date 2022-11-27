@@ -26,7 +26,7 @@ def index():
                 'index.html',
                 summary="""Input Error: \
                 Make sure that input is English or has max length of 1000"""
-                )
+            )
         summary = predict(inp_ids)
         print('Summary is: \n', summary)
         session.add(UnlabeledData(raw_text_input=inp, model_output=summary))

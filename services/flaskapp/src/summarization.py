@@ -19,7 +19,7 @@ tokenizer = AutoTokenizer.from_pretrained(
 model = AutoModelForSeq2SeqLM.from_pretrained(
     "QuickRead/pegasus-reddit-7e05-new",
     cache_dir=cache_dir
-    )
+)
 
 
 def remove_emoji(inp):
@@ -35,7 +35,7 @@ def remove_emoji(inp):
         u"\U00002702-\U000027B0"
         u"\U000024C2-\U0001F251"
         "]+", flags=re.UNICODE
-        )
+    )
     return emoji_pattern.sub(r'', inp)
 
 

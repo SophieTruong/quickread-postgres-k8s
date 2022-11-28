@@ -27,3 +27,6 @@ ENV/
 .env.prod.sample
 .env.prod.db.sample
 .pylintrc
+#Test
+.pytest_cache
+.coverage

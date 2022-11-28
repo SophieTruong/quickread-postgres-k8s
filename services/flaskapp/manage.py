@@ -1,7 +1,7 @@
 ''' Management '''
 from flask.cli import FlaskGroup
 from src import app
-from src.models import db,UnlabeledData
+from src.models import db, UnlabeledData
 
 cli = FlaskGroup(app)
 
@@ -21,6 +21,7 @@ def seed_db():
     """
     db.session.add(UnlabeledData(raw_text_input="Hi Mom, how are you today?"))
     db.session.commit()
+
 
 if __name__ == "__main__":
     cli()

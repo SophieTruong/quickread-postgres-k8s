@@ -8,3 +8,6 @@ tokenizers==0.13.2
 langdetect==1.0.9
 -f https://download.pytorch.org/whl/cpu/torch_stable.html
 torch>=1.8.0+cpu
+pytest==7.2.0
+pytest-cov==4.0.0
+flake8==6.0.0

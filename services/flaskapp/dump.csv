@@ -1,18 +1,1 @@
 id,raw_text_input,model_output
-1,"hello world. Gunicorn implements a UNIX pre-fork web server.
-
-Great, what does that mean?
-
-Gunicorn starts a single master process that gets forked, and the resulting child processes are the workers.
-The role of the master process is to make sure that the number of workers is the same as the ones defined in the settings. So if any of the workers die, the master process starts another one, by forking itself again.
-The role of the workers is to handle HTTP requests.
-The pre in pre-forked means that the master process creates the workers before handling any HTTP request.
-The OS kernel handles load balancing between worker processes.
-","Gunicorn implements a pre-forked web server, and the OS kernel handles load balancing between worker processes."
-2,"Before multi-stage builds
-One of the most challenging things about building images is keeping the image size down. Each RUN, COPY, and ADD instruction in the Dockerfile adds a layer to the image, and you need to remember to clean up any artifacts you don’t need before moving on to the next layer. To write a really efficient Dockerfile, you have traditionally needed to employ shell tricks and other logic to keep the layers as small as possible and to ensure that each layer has the artifacts it needs from the previous layer and nothing else.
-
-It was actually very common to have one Dockerfile to use for development (which contained everything needed to build your application), and a slimmed-down one to use for production, which only contained your application and exactly what was needed to run it. This has been referred to as the “builder pattern”. Maintaining two Dockerfiles is not ideal.
-
-
-","If you want to write a really efficient Dockerfile, you need to keep the image size as small as possible. If you want to write a really efficient Dockerfile, you need to keep the image size as small as possible. If you want to write a really efficient Dockerfile, you need to keep the image size as small as possible. It was actually very common to have one Dockerfile to use for development (which contained everything needed to build your application), and a slimmed-down one to use for production, which only contained your application and exactly what was needed to run it."

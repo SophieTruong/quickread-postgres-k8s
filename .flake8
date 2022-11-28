@@ -1,0 +1,7 @@
+[flake8]
+ignore = E501,E226,E302,E41
+max-line-length = 160
+exclude = env,.env,/env,.env,venv,/venv,.git,__pycache__
+max-complexity = 10
+
+

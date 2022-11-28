@@ -46,12 +46,14 @@ jobs:
       -
         name: Build and push flaskapp
         run: |
-          docker buildx build --tag ${{ env.FLASK_CONTAINER_NAME }}:1.3 --file services/flaskapp/Dockerfile.prod  --load .
+          cd services/flaskapp
+          docker buildx build --tag ${{ env.FLASK_CONTAINER_NAME }}:1.3 --file Dockerfile.prod  --load .
         shell: bash
       -
         name: Build and push webserver
         run: |
-          docker buildx build --tag ${{ env.SERVER_CONTAINER_NAME }}:1.2 --file services/nginx/Dockerfile --load .
+          cd services/nginx
+          docker buildx build --tag ${{ env.SERVER_CONTAINER_NAME }}:1.2 --file Dockerfile --load .
         shell: bash
       # Configure Docker context and use docker compose to deploy to ECS
       -

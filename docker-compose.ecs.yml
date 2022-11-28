@@ -1,0 +1,29 @@
+# postgres volume problem: https://stackoverflow.com/questions/64973111/how-to-mount-a-docker-volume-in-azure-with-docker-compose-yaml
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13-alpine
+    env_file:
+      - ./.env.prod.db
+  web:
+    image: sophietruong92/quick-read-flaskapp:1.3
+    command: gunicorn --bind 0.0.0.0:5050 --log-level debug --timeout 150 --threads=2 manage:app 
+    expose:
+      - 5050
+    deploy:
+      resources:
+        reservations:
+          cpus: '1.5'
+          memory: 8G  
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - db
+  nginx:
+    image: sophietruong92/quick-read-webserver:1.2
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web

@@ -2,11 +2,14 @@ name: Deploy to Amazon ECS
 on:
   push:
     branches:
-      - release/
+      - release/test
 env:
-  ENV_VARIABLE: test                          
-  FLASK_CONTAINER_NAME: MY_CONTAINER_NAME     
-  SERVER_CONTAINER_NAME: MY_CONTAINER_NAME
+  AWS_ACCESS_KEY_ID: ${{ secrets.MY_AWS_ACCESS_KEY_ID }}
+  AWS_ACCOUNT_ID: ${{ secrets.MY_AWS_ACCOUNT_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.MY_AWS_REGION }}              
+  FLASK_CONTAINER_NAME: sophietruong92/quick-read-flaskapp
+  SERVER_CONTAINER_NAME: sophietruong92/quick-read-webserver
 
 jobs:
   build:
@@ -19,16 +22,83 @@ jobs:
         name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       -
-        name: Build and push flaskapp
-        uses: docker/build-push-action@v3
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      # Configure AWS Credentials
+      - 
+        name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/clockbox:latest
+          aws-access-key-id: ${{ secrets.MY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.MY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.MY_AWS_REGION }}
+      - 
+        name: Install Docker Compose
+        uses: KengoTODA/actions-setup-docker-compose@main
+        with:
+          version: '1.29.2'
+      -
+        name: Update docker-compose cli version
+        run: |
+          sudo curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sudo sh
+      -
+        name: check docker new version 
+        run: docker -v
+      -
+        name: check docker compose new version 
+        run: docker compose version
+
+      # Configure Docker context and use docker compose to deploy to ECS
+      -
+        name: Docker context create ecs-context
+        run: |
+          docker context create ecs ecs-context --from-env
+          docker context ls
+      - 
+        name: Create .env.prod file
+        run: |
+          touch .env.prod
+          echo FLASK_APP=src/__init__.py >> .env.prod
+          echo FLASK_DEBUG=1 >> .env.prod
+          echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env.prod
+          echo SQL_HOST=db >> .env.prod
+          echo SQL_PORT=5432 >> .env.prod
+          echo DATABASE=postgres >> .env.prod
+          echo TRANSFORMERS_CACHE=.cache/ >> .env.prod
+          cat .env.prod
+      - 
+        name: Create .env.prod.db file
+        run: |
+          touch .env.prod.db
+          echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env.prod.db
+          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env.prod.db
+          echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env.prod.db
+          cat .env.prod.db
+      -
+        name: Build and push flaskapp
+        run: |
+          cd services/flaskapp
+          docker buildx build --tag ${{ env.FLASK_CONTAINER_NAME }}:1.3 --file Dockerfile.prod  --load .
+        shell: bash
+      -
+        name: Build and push webserver
+        run: |
+          cd services/nginx
+          docker buildx build --tag ${{ env.SERVER_CONTAINER_NAME }}:1.2 --file Dockerfile --load .
+        shell: bash
+      # Configure Docker context and use docker compose to deploy to ECS
+      -
+        name: Docker compose up
+        run: |
+          docker images
+          docker context use ecs-context
+          docker context ls
+          docker compose -f docker-compose.ecs.yml config
+          echo "Debugging DONE"
+          docker compose -f docker-compose.ecs.yml up

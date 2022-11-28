@@ -46,12 +46,12 @@ jobs:
       -
         name: Build and push flaskapp
         run: |
-          bash build_push_docker.sh -X services/flaskapp Dockerfile.prod ${{ env.FLASK_CONTAINER_NAME }}:1.3 ${{ secrets.DOCKERHUB_USERNAME }} linux/arm64,linux/amd64
+          docker buildx build --load --tag ${{ env.FLASK_CONTAINER_NAME }}:1.3 --file services/flaskapp Dockerfile.prod --platform=linux/arm64,linux/amd64 .
         shell: bash
       -
         name: Build and push webserver
         run: |
-          bash build_push_docker.sh -X services/flaskapp Dockerfile.prod ${{ env.SERVER_CONTAINER_NAME }}:1.2 ${{ secrets.DOCKERHUB_USERNAME }} linux/arm64,linux/amd64
+          docker buildx build --load --tag ${{ env.SERVER_CONTAINER_NAME }}:1.2 --file services/nginx Dockerfile --platform=linux/arm64,linux/amd64 .
         shell: bash
       # Configure Docker context and use docker compose to deploy to ECS
       -
@@ -64,4 +64,4 @@ jobs:
         run: |
           docker context create ecs ecs-context --from-env
           echo "Success"
-          docker --context default compose -f docker-compose.aci.yml config
+          docker --context default compose -f docker-compose.ecs.yml config

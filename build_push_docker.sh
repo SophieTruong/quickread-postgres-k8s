@@ -40,7 +40,7 @@ Ex: bash build_push_docker.sh -X services/flaskapp Dockerfile test:latest usenam
     echo -e "-d Deploy docker containers using 'docker compose -f {file_name} up -d' based on the PARAMS given. The order of PARAMS is:\r
     (1) \tcontext (e.g., default)\r
     (2) \tdocker-compose file name (e.g., docker-compose.yml)\r
-    (Optional: If the required images for docker-compose cannot be found locally)\r
+    (Optional: For deploying with default-context, the required images for docker-compose need to exist locally)\r
     (3) \tDocker image name:tag from DockerHub(e.g. username_123/quickread-mvp:latest) \r
     (4) \tDocker image name:tag from DockerHub(e.g. username_123/quickread-mvp:latest) \r
 Ex: bash build_push_docker.sh -d default docker-compose.prod.yml username_123/quick-read-flaskapp:1.3 username_123/quick-read-webserver:1.2"
@@ -88,7 +88,7 @@ buildX() # build (and push) docker image for multiple platforms based on Dockerf
     echo
     docker login
     docker buildx build --push --tag $4/$3 --file $2 --platform=$5 .
-    docker pull $4/$3
+    docker pull $4/$3 #This is needed for deploying in local env
     echo    'END'
 }
 

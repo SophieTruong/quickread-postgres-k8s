@@ -20,3 +20,8 @@ In rootdir
 - In root, run `docker compose -f docker-compose.prod.yml up -d --build` to build and run the docker images. Then, run `docker compose -f docker-compose.prod.yml exec web python manage.py create_db` to start the app and create db table
 - To spin off the container, run `docker compose -f docker-compose.prod.yml down -v`
 
+### Docker 
+## build image and push 
+1. Flask App for production:
+In `./services/flaskapp` run:
+`docker buildx build --push --tag <Docker_username>/<Flask-App-name>:<tag> --file Dockerfile.prod --platform=linux/arm64,linux/amd64 .`

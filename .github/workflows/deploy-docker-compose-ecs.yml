@@ -5,8 +5,8 @@ on:
       - release/
 env:
   ENV_VARIABLE: test                          
-  FLASK_CONTAINER_NAME: MY_CONTAINER_NAME     
-  SERVER_CONTAINER_NAME: MY_CONTAINER_NAME
+  FLASK_CONTAINER_NAME: sophietruong92/quick-read-flaskapp 
+  SERVER_CONTAINER_NAME: sophietruong92/quick-read-webserver
 
 jobs:
   build:
@@ -28,7 +28,37 @@ jobs:
         name: Build and push flaskapp
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ./services/flaskapp
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/clockbox:latest
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FLASK_CONTAINER_NAME }}:1.3
+      -
+        name: Build and push webserver
+        uses: docker/build-push-action@v3
+        with:
+          context: ./services/nginx
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/${{ secrets.FLASK_CONTAINER_NAME }}:1.2
+      # Configure AWS Credentials
+      - 
+        name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.MY_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.MY_AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.MY_AWS_REGION }}
+      - 
+        name: Install Docker Compose
+        run: curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
+      # Configure Docker context and use docker compose to deploy to ECS
+      -
+        name: Docker context and compose up
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.MY_AWS_ACCESS_KEY_ID }}
+          AWS_ACCOUNT_ID: ${{ secrets.MY_AWS_ACCOUNT_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.MY_AWS_REGION }}
+        run: |
+          docker context create ecs ecs-context --from-env
+          docker --context ecs-context compose -f docker-compose.aci.yml up

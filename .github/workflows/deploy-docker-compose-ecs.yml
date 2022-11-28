@@ -60,6 +60,26 @@ jobs:
         run: |
           docker context create ecs ecs-context --from-env
           docker context ls
+      - 
+        name: Create .env.prod file
+        run: |
+          touch .env.prod
+          echo FLASK_APP=src/__init__.py >> .env.prod
+          echo FLASK_DEBUG=1 >> .env.prod
+          echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env.prod
+          echo SQL_HOST=db >> .env.prod
+          echo SQL_PORT=5432 >> .env.prod
+          echo DATABASE=postgres >> .env.prod
+          echo TRANSFORMERS_CACHE=.cache/ >> .env.prod
+          cat .env.prod
+      - 
+        name: Create .env.prod.db file
+        run: |
+          touch .env.prod.db
+          echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env.prod.db
+          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env.prod.db
+          echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env.prod.db
+          cat .env.prod.db
       -
         name: Build and push flaskapp
         run: |
@@ -80,5 +100,5 @@ jobs:
           docker context use default
           docker context ls
           docker compose -f docker-compose.ecs.yml config
-          echo 
+          echo "Debugging DONE"
           docker compose -f docker-compose.ecs.yml up

@@ -4,7 +4,10 @@ on:
     branches:
       - release/test
 env:
-  ENV_VARIABLE: test                          
+  AWS_ACCESS_KEY_ID: ${{ secrets.MY_AWS_ACCESS_KEY_ID }}
+  AWS_ACCOUNT_ID: ${{ secrets.MY_AWS_ACCOUNT_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: ${{ secrets.MY_AWS_REGION }}              
   FLASK_CONTAINER_NAME: sophietruong92/quick-read-flaskapp
   SERVER_CONTAINER_NAME: sophietruong92/quick-read-webserver
 
@@ -41,8 +44,22 @@ jobs:
         with:
           version: '1.29.2'
       -
+        name: Update docker-compose cli version
+        run: |
+          sudo curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sudo sh
+      -
+        name: check docker new version 
+        run: docker -v
+      -
         name: check docker compose new version 
         run: docker compose version
+
+      # Configure Docker context and use docker compose to deploy to ECS
+      -
+        name: Docker context create ecs-context
+        run: |
+          docker context create ecs ecs-context --from-env
+          docker context ls
       -
         name: Build and push flaskapp
         run: |
@@ -57,13 +74,6 @@ jobs:
         shell: bash
       # Configure Docker context and use docker compose to deploy to ECS
       -
-        name: Docker context and compose up
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.MY_AWS_ACCESS_KEY_ID }}
-          AWS_ACCOUNT_ID: ${{ secrets.MY_AWS_ACCOUNT_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.MY_AWS_REGION }}
+        name: Docker compose up
         run: |
-          docker context create ecs ecs-context
-          docker context ls
           docker --context ecs-context compose -f docker-compose.ecs.yml config

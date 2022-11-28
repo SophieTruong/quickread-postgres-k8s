@@ -53,4 +53,5 @@ jobs:
           AWS_REGION: ${{ secrets.MY_AWS_REGION }}
         run: |
           docker context create ecs ecs-context --from-env
+          echo "Success"
           docker --context ecs-context compose -f docker-compose.aci.yml up

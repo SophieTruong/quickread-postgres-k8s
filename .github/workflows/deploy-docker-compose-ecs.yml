@@ -97,7 +97,7 @@ jobs:
         name: Docker compose up
         run: |
           docker images
-          docker context use default
+          docker context use ecs-context
           docker context ls
           docker compose -f docker-compose.ecs.yml config
           echo "Debugging DONE"

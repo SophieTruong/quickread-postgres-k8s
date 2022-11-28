@@ -76,4 +76,9 @@ jobs:
       -
         name: Docker compose up
         run: |
-          docker --context ecs-context compose -f docker-compose.ecs.yml up
+          docker images
+          docker context use default
+          docker context ls
+          docker compose -f docker-compose.ecs.yml config
+          echo 
+          docker compose -f docker-compose.ecs.yml up

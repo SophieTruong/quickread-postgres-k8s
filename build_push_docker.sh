@@ -82,11 +82,11 @@ buildX() # build (and push) docker image for multiple platforms based on Dockerf
     pwd
     echo
     echo    "Commands to be run are: "
-    printf  '\t%s\n' "docker login"
+    # printf  '\t%s\n' "docker login"
     printf  '\t%s\n' "docker buildx build --push --tag $4/$3 --file $2 --platform=$5 ."
     printf  '\t%s\n' "docker pull $4/$3"
     echo
-    docker login
+    # docker login
     docker buildx build --push --tag $4/$3 --file $2 --platform=$5 .
     docker pull $4/$3 #This is needed for deploying in local env
     echo    'END'

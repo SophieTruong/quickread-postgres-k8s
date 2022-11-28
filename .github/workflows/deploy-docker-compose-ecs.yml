@@ -64,6 +64,6 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.MY_AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.MY_AWS_REGION }}
         run: |
-          docker context create ecs ecs-context --from-env
-          echo "Success"
-          docker --context default compose -f docker-compose.ecs.yml config
+          docker context create ecs ecs-context
+          docker context ls
+          docker --context ecs-context compose -f docker-compose.ecs.yml config

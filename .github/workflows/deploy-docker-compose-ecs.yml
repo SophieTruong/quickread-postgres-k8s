@@ -7,7 +7,6 @@ env:
   ENV_VARIABLE: test                          
   FLASK_CONTAINER_NAME: sophietruong92/quick-read-flaskapp
   SERVER_CONTAINER_NAME: sophietruong92/quick-read-webserver
-  DOCKER_COMPOSE_FILE: docker-compose.aci.yml
 
 jobs:
   build:
@@ -54,4 +53,4 @@ jobs:
           AWS_REGION: ${{ secrets.MY_AWS_REGION }}
         run: |
           docker context create ecs ecs-context --from-env
-          docker --context ecs-context compose -f ${{ DOCKER_COMPOSE_FILE }} up
+          docker --context ecs-context compose -f docker-compose.aci.yml up

@@ -46,24 +46,12 @@ jobs:
       -
         name: Build and push flaskapp
         run: |
-          docker buildx build \
-          --tag ${{ env.FLASK_CONTAINER_NAME }}:1.3 \
-          --cache-from type=local,src=/tmp/.buildx-cache \
-          --cache-to type=local,dest=/tmp/.buildx-cache-new \
-          --file services/flaskapp/Dockerfile.prod \
-          --load \ 
-          .
+          docker buildx build --tag ${{ env.FLASK_CONTAINER_NAME }}:1.3 --file services/flaskapp/Dockerfile.prod  --load .
         shell: bash
       -
         name: Build and push webserver
         run: |
-          docker buildx build \
-          --tag ${{ env.SERVER_CONTAINER_NAME }}:1.2 \
-          --cache-from type=local,src=/tmp/.buildx-cache \
-          --cache-to type=local,dest=/tmp/.buildx-cache-new \
-          --file services/nginx/Dockerfile \
-          --load \
-          .
+          docker buildx build --tag ${{ env.SERVER_CONTAINER_NAME }}:1.2 --file services/nginx/Dockerfile --load .
         shell: bash
       # Configure Docker context and use docker compose to deploy to ECS
       -

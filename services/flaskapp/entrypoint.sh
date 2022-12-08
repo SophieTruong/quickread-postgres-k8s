@@ -9,9 +9,14 @@ then
     done
 
     echo "PostgreSQL started"
+
+    # Command out when persistent data is implemented
+    echo "Creating the database tables..."
+    python manage.py create_db
+    echo "Tables created"
 fi
 
-if [ "$FLASK_DEBUG" = "0" ] 
+if [ "$FLASK_DEBUG" = "1" ] 
 then
     echo "Creating the database tables..."
     python manage.py create_db # create a new table and wipe out old one

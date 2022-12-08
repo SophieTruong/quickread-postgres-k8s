@@ -12,6 +12,7 @@ def create_db():
     """
     db.drop_all()
     db.create_all()
+    print(db)
     db.session.commit()
 
 @cli.command("seed_db")
@@ -19,7 +20,7 @@ def seed_db():
     """
     Add seed data to db
     """
-    db.session.add(UnlabeledData(raw_text_input="Hi Mom, how are you today?"))
+    db.session.add(UnlabeledData(raw_text_input="Hi Mom, how are you today?", model_output=" "))
     db.session.commit()
 
 

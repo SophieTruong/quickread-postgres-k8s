@@ -16,7 +16,7 @@ then
     echo "Tables created"
 fi
 
-if [ "$FLASK_DEBUG" = "1" ] 
+if [ "$FLASK_DEBUG" = "0" ] 
 then
     echo "Creating the database tables..."
     python manage.py create_db # create a new table and wipe out old one

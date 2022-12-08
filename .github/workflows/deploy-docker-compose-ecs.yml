@@ -84,7 +84,7 @@ jobs:
         name: Build and push flaskapp
         run: |
           cd services/flaskapp
-          docker buildx build --tag ${{ env.FLASK_CONTAINER_NAME }}:1.3 --file Dockerfile.prod  --load .
+          docker buildx build --tag ${{ env.FLASK_CONTAINER_NAME }}:1.4 --file Dockerfile.prod  --load .
         shell: bash
       -
         name: Build and push webserver

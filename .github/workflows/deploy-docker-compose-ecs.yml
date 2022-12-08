@@ -65,7 +65,7 @@ jobs:
         run: |
           touch .env.prod
           echo FLASK_APP=src/__init__.py >> .env.prod
-          echo FLASK_DEBUG=1 >> .env.prod
+          echo FLASK_DEBUG=0 >> .env.prod
           echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env.prod
           echo SQL_HOST=db >> .env.prod
           echo SQL_PORT=5432 >> .env.prod
@@ -84,7 +84,7 @@ jobs:
         name: Build and push flaskapp
         run: |
           cd services/flaskapp
-          docker buildx build --tag ${{ env.FLASK_CONTAINER_NAME }}:1.3 --file Dockerfile.prod  --load .
+          docker buildx build --tag ${{ env.FLASK_CONTAINER_NAME }}:1.4 --file Dockerfile.prod  --load .
         shell: bash
       -
         name: Build and push webserver

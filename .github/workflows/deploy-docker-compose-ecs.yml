@@ -65,7 +65,7 @@ jobs:
         run: |
           touch .env.prod
           echo FLASK_APP=src/__init__.py >> .env.prod
-          echo FLASK_DEBUG=1 >> .env.prod
+          echo FLASK_DEBUG=0 >> .env.prod
           echo DATABASE_URL=${{ secrets.DATABASE_URL }} >> .env.prod
           echo SQL_HOST=db >> .env.prod
           echo SQL_PORT=5432 >> .env.prod

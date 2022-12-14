@@ -15,7 +15,7 @@ services:
       resources:
         reservations:
           cpus: '1.5'
-          memory: 8G  
+          memory: 10G  
     env_file:
       - ./.env.prod
     depends_on:

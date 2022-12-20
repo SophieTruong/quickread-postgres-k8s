@@ -8,13 +8,13 @@ services:
       - ./.env.prod.db
   web:
     image: sophietruong92/quick-read-flaskapp:1.4
-    command: gunicorn --bind 0.0.0.0:5050 --log-level debug --timeout 1000 --threads=2 manage:app 
+    command: gunicorn --bind 0.0.0.0:5050 --log-level debug --timeout 3000 --threads=2 manage:app 
     expose:
       - 5050
     deploy:
       resources:
         reservations:
-          cpus: '1.5'
+          cpus: '2'
           memory: 10G  
     env_file:
       - ./.env.prod

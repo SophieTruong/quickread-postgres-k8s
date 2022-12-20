@@ -92,5 +92,15 @@ def get_rouge():
     print(df)
 
     fig = px.bar(df, barmode='group')
+    fig = fig.update_layout(
+        xaxis_title="Index",
+        yaxis_title="ROUGE scores",
+        legend_title="ROUGE metrics",
+        font=dict(
+            family="Courier New, monospace",
+            size=18,
+        )
+    )
+
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return render_template('eval_page.html', graphJSON=graphJSON)

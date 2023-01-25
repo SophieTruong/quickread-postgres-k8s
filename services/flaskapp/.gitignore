@@ -3,3 +3,4 @@ venv/
 #Test
 .pytest_cache
 .coverage
+.cache/
